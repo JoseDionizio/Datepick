@@ -5,27 +5,40 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
+using Java.Util;
+using Android.Media;
+using Datapicker;
 
 namespace Datapicker
 {
     [Activity(Label = "Datapicker", MainLauncher = true, Icon = "@drawable/icon")]
     public class MainActivity : Activity
     {
-        int count = 1;
+        TextView _dateDisplay;
+        Button _dateSelectButton;
 
-        protected override void OnCreate(Bundle bundle)
+        override
+        protected void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
-
-            // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
 
-            // Get our button from the layout resource,
-            // and attach an event to it
-            Button button = FindViewById<Button>(Resource.Id.MyButton);
+            _dateDisplay = FindViewById<TextView>(Resource.Id.date_display);
+            _dateSelectButton = FindViewById<Button>(Resource.Id.date_select_button);
+            _dateSelectButton.Click += DateSelect_OnClick;
 
-            button.Click += delegate { button.Text = string.Format("{0} clicks!", count++); };
         }
+
+        void DateSelect_OnClick(object sender, EventArgs eventArgs)
+        {
+            DatePickerFragment frag = DatePickerFragment.NewInstance(delegate (DateTime time)
+            {
+                _dateDisplay.Text = time.ToLongDateString();
+            });
+            frag.Show(FragmentManager, DatePickerFragment.TAG);
+        }
+
     }
 }
 
+ 
